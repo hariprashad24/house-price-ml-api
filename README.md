@@ -38,4 +38,4 @@ Response:
 - `requirements.txt` — dependencies
 
 ## Author
-Hariprashad C — architect-turned-ML practitioner. Built as part of a portfolio bridging architecture and machine learning for M.Sc. ITECH Stuttgart 2027 application.
+Hariprashad C — architect-turned-ML practitioner. Built as part of a portfolio bridging architecture and machine learning 
