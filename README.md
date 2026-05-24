@@ -40,4 +40,8 @@ Response:
 "Free tier sleeps; first request after 15 min idle takes ~30s to wake"
 
 ## Author
+<<<<<<< HEAD
 Hariprashad C — architect-turned-ML practitioner. Built as part of a portfolio bridging architecture and machine learning 
+=======
+Hariprashad C — architect-turned-ML practitioner. Built as part of a portfolio bridging architecture and machine learning 
+>>>>>>> e77ce280eabecd35a58b884ce5e8a96c71740e40
