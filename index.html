@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>House Price Predictor</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: #1e293b;
+      padding: 40px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .subtitle {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #e2e8f0;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: #3b82f6; }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 16px;
+      font-size: 16px;
+      font-weight: 500;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover:not(:disabled) { background: #2563eb; }
+    button:disabled { background: #475569; cursor: not-allowed; }
+    .result {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 8px;
+      display: none;
+    }
+    .result.show { display: block; }
+    .result.success { background: #064e3b; color: #6ee7b7; }
+    .result.error { background: #7f1d1d; color: #fca5a5; }
+    .price {
+      font-size: 28px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>House Price Predictor</h1>
+    <p class="subtitle">ML model deployed via FastAPI</p>
+
+    <label for="size">House size (sqft)</label>
+    <input
+      type="number"
+      id="size"
+      placeholder="e.g. 1600"
+      min="0"
+    />
+
+    <button id="predictBtn" onclick="predict()">Predict Price</button>
+
+    <div id="result" class="result"></div>
+
+    <div class="footer">
+      API: <code>http://127.0.0.1:8000/predict</code>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "http://127.0.0.1:8000/predict";
+
+    async function predict() {
+      const sizeInput = document.getElementById("size");
+      const resultDiv = document.getElementById("result");
+      const btn = document.getElementById("predictBtn");
+      const size = sizeInput.value;
+
+      resultDiv.className = "result";
+
+      if (!size || size <= 0) {
+        resultDiv.className = "result show error";
+        resultDiv.innerText = "Enter a valid positive size.";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Predicting...";
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ size: parseFloat(size) })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API returned ${response.status}`);
+        }
+
+        const data = await response.json();
+        resultDiv.className = "result show success";
+        resultDiv.innerHTML = `
+          <div>Predicted price for ${data.input_size} sqft:</div>
+          <div class="price">₹ ${data.predicted_price} L</div>
+        `;
+      } catch (err) {
+        resultDiv.className = "result show error";
+        resultDiv.innerText = `Error: ${err.message}. Is uvicorn running?`;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Predict Price";
+      }
+    }
+
+    // Allow Enter key to submit
+    document.getElementById("size").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") predict();
+    });
+  </script>
+</body>
+</html>
