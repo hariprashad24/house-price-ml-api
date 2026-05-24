@@ -24,69 +24,31 @@
       max-width: 420px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     }
-    h1 {
-      margin: 0 0 8px;
-      font-size: 24px;
-      font-weight: 600;
-    }
-    .subtitle {
-      color: #94a3b8;
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-    label {
-      display: block;
-      font-size: 13px;
-      color: #94a3b8;
-      margin-bottom: 6px;
-    }
+    h1 { margin: 0 0 8px; font-size: 24px; font-weight: 600; }
+    .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
+    label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 6px; }
     input {
-      width: 100%;
-      padding: 12px 14px;
-      font-size: 16px;
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      color: #e2e8f0;
-      outline: none;
-      transition: border-color 0.2s;
+      width: 100%; padding: 12px 14px; font-size: 16px;
+      background: #0f172a; border: 1px solid #334155;
+      border-radius: 8px; color: #e2e8f0; outline: none;
     }
     input:focus { border-color: #3b82f6; }
     button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 16px;
-      font-size: 16px;
-      font-weight: 500;
-      background: #3b82f6;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
+      width: 100%; padding: 12px; margin-top: 16px;
+      font-size: 16px; font-weight: 500;
+      background: #3b82f6; color: white; border: none;
+      border-radius: 8px; cursor: pointer;
     }
     button:hover:not(:disabled) { background: #2563eb; }
     button:disabled { background: #475569; cursor: not-allowed; }
     .result {
-      margin-top: 20px;
-      padding: 16px;
-      border-radius: 8px;
-      display: none;
+      margin-top: 20px; padding: 16px; border-radius: 8px; display: none;
     }
     .result.show { display: block; }
     .result.success { background: #064e3b; color: #6ee7b7; }
     .result.error { background: #7f1d1d; color: #fca5a5; }
-    .price {
-      font-size: 28px;
-      font-weight: 600;
-      margin-top: 4px;
-    }
-    .footer {
-      margin-top: 24px;
-      text-align: center;
-      font-size: 12px;
-      color: #64748b;
-    }
+    .price { font-size: 28px; font-weight: 600; margin-top: 4px; }
+    .footer { margin-top: 24px; text-align: center; font-size: 12px; color: #64748b; }
   </style>
 </head>
 <body>
@@ -95,14 +57,9 @@
     <p class="subtitle">ML model deployed via FastAPI</p>
 
     <label for="size">House size (sqft)</label>
-    <input
-      type="number"
-      id="size"
-      placeholder="e.g. 1600"
-      min="0"
-    />
+    <input type="number" id="size" placeholder="e.g. 1600" min="0" />
 
-    <button id="predictBtn" onclick="predict()">Predict Price</button>
+    <button id="predictBtn">Predict Price</button>
 
     <div id="result" class="result"></div>
 
@@ -112,7 +69,7 @@
   </div>
 
   <script>
-    API: <code>https://house-price-ml-api.onrender.com/predict</code>
+    const API_URL = "https://house-price-ml-api.onrender.com/predict";
 
     async function predict() {
       const sizeInput = document.getElementById("size");
@@ -138,27 +95,24 @@
           body: JSON.stringify({ size: parseFloat(size) })
         });
 
-        if (!response.ok) {
-          throw new Error(`API returned ${response.status}`);
-        }
+        if (!response.ok) throw new Error("API returned " + response.status);
 
         const data = await response.json();
         resultDiv.className = "result show success";
-        resultDiv.innerHTML = `
-          <div>Predicted price for ${data.input_size} sqft:</div>
-          <div class="price">₹ ${data.predicted_price} L</div>
-        `;
+        resultDiv.innerHTML =
+          "<div>Predicted price for " + data.input_size + " sqft:</div>" +
+          "<div class='price'>&#8377; " + data.predicted_price + " L</div>";
       } catch (err) {
         resultDiv.className = "result show error";
-        resultDiv.innerText = `Error: ${err.message}. Is uvicorn running?`;
+        resultDiv.innerText = "Error: " + err.message + ". (API may be waking up, try again in 30s.)";
       } finally {
         btn.disabled = false;
         btn.innerText = "Predict Price";
       }
     }
 
-    // Allow Enter key to submit
-    document.getElementById("size").addEventListener("keypress", (e) => {
+    document.getElementById("predictBtn").addEventListener("click", predict);
+    document.getElementById("size").addEventListener("keypress", function(e) {
       if (e.key === "Enter") predict();
     });
   </script>
