@@ -2,6 +2,17 @@
 
 A linear regression model deployed as a REST API with FastAPI, plus a minimal HTML frontend.
 
+## 🚀 Live Demo
+
+**Try it now (no install needed):**
+👉 **https://hariprashad24.github.io/house-price-ml-api/**
+
+Also available:
+- API Swagger UI: https://house-price-ml-api.onrender.com/docs
+- API root: https://house-price-ml-api.onrender.com/
+
+> ⏱️ Note: Free-tier backend sleeps after 15 min of inactivity. First request after sleep takes ~30 seconds to wake up. After that, predictions are instant.
+
 ## Stack
 - Python, scikit-learn, pandas
 - FastAPI, uvicorn, pydantic
