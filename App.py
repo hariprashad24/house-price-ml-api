@@ -8,7 +8,7 @@ import pandas as pd
 # Load the trained model ONCE at startup, not on every request
 model = joblib.load("my_trained_housing_model.pkl")
 
-app = FastAPI(title="House Price API", docs_url=None)
+app = FastAPI(docs_url="/api/docs", redoc_url="/api/redoc")
 
 # Allow the browser to call this API from a local HTML file
 # In production you'd restrict allow_origins to your real domain
